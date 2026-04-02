@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Career Compass</h1>
+    <h3>AI-Driven Skill Recommendation System</h3>
+
+    <form method="POST">
+
+        <label>Target Role</label>
+        <select name="role" required>
+            {% for r in roles %}
+                <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Current Skills (comma separated)</label>
+        <input type="text" name="skills" placeholder="Java, SQL, Python" required>
+
+        <button type="submit">Get Recommendations</button>
+
+    </form>
+
+    {% if readiness is not none %}
+
+        <hr>
+
+        <h3>Readiness Score: {{ readiness }}%</h3>
+
+        <h4>Recommended Skills to Learn:</h4>
+
+        <ul>
+            {% for skill in recommendations %}
+                <li>{{ skill }}</li>
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

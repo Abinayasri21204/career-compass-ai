@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <div style="margin-bottom: 28px;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px;">
+                ◈ Career Compass
+            </div>
+            <h1 style="font-size: 1.9rem; text-align: center;">Create account</h1>
+            <p class="subtitle">Start your placement preparation journey</p>
+        </div>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">USERNAME</div>
+            <input type="text" name="username" placeholder="Choose a username" required autocomplete="username">
+
+            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">EMAIL</div>
+            <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
+
+            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">PASSWORD</div>
+            <input type="password" name="password" placeholder="Create a password" required autocomplete="new-password">
+
+            <button type="submit" style="margin-top: 8px;">Create Account</button>
+        </form>
+
+        <div class="auth-links" style="justify-content: center;">
+            <a href="/">Already have an account? Sign in</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

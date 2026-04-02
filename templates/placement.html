@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Placement Readiness Analyzer</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+
+.section-title{
+margin-top:25px;
+margin-bottom:10px;
+font-size:18px;
+color:#38bdf8;
+}
+
+.skill-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+margin-bottom:25px;
+}
+
+.skill-item{
+display:flex;
+align-items:center;
+gap:12px;
+background:rgba(0,0,0,0.25);
+padding:10px;
+border-radius:10px;
+}
+
+.skill-item input{
+transform:scale(1.4);
+cursor:pointer;
+}
+
+.result-box{
+margin-top:40px;
+padding:30px;
+background:rgba(0,0,0,0.35);
+border-radius:16px;
+text-align:center;
+box-shadow:0 20px 40px rgba(0,0,0,0.5);
+}
+
+.progress-bar{
+width:100%;
+height:14px;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.progress-fill{
+height:100%;
+background:linear-gradient(90deg,#22c55e,#06b6d4);
+}
+
+.ai-box{
+margin-top:25px;
+padding:20px;
+background:rgba(0,0,0,0.25);
+border-radius:12px;
+text-align:left;
+line-height:1.6;
+}
+
+.badge{
+display:inline-block;
+padding:6px 14px;
+border-radius:20px;
+margin-top:10px;
+font-size:14px;
+}
+
+.good{ background:#22c55e; }
+.mid{ background:#facc15; color:black; }
+.low{ background:#ef4444; }
+
+</style>
+
+</head>
+
+<body class="home-body">
+
+<div class="career-container">
+
+<h2>Placement Readiness Analyzer</h2>
+
+<form method="POST">
+
+<div class="section-title">Core Skills</div>
+
+<div class="skill-grid">
+
+<label class="skill-item"><input type="checkbox" name="core_skills" value="OOPS"> OOPS</label>
+<label class="skill-item"><input type="checkbox" name="core_skills" value="DBMS"> DBMS</label>
+<label class="skill-item"><input type="checkbox" name="core_skills" value="OS"> Operating Systems</label>
+<label class="skill-item"><input type="checkbox" name="core_skills" value="CN"> Computer Networks</label>
+
+</div>
+
+
+<div class="section-title">DSA Concepts</div>
+
+<div class="skill-grid">
+
+<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Arrays"> Arrays</label>
+<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="LinkedList"> Linked List</label>
+<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Stack"> Stack</label>
+<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Queue"> Queue</label>
+<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Trees"> Trees</label>
+<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Graphs"> Graphs</label>
+
+</div>
+
+
+<div class="section-title">Preferred Language</div>
+
+<input type="text"
+name="language"
+placeholder="Python / Java / C++"
+required>
+
+
+<div class="section-title">Projects</div>
+
+<select name="projects">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+
+
+<div class="section-title">Internship</div>
+
+<select name="internship">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+
+
+<!-- 🔥 NEW REALISTIC FIELDS -->
+
+<div class="section-title">Problem Solving Consistency</div>
+
+<select name="consistency">
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+
+
+<div class="section-title">Resume Quality</div>
+
+<select name="resume">
+<option value="average">Average</option>
+<option value="good">Good</option>
+</select>
+
+
+<div class="section-title">Communication Skills</div>
+
+<select name="communication">
+<option value="average">Average</option>
+<option value="good">Good</option>
+</select>
+
+
+<div class="section-title">Mock Interviews</div>
+
+<select name="mock">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+
+
+<br>
+
+<button type="submit"
+onclick="this.innerText='Analyzing...';">
+
+Analyze Readiness
+
+</button>
+
+</form>
+
+
+{% if score is not none %}
+
+<div class="result-box">
+
+<h3>Your Placement Readiness</h3>
+
+<h1 style="font-size:52px;color:#22c55e;">
+{{ score }}%
+</h1>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:{{ score }}%"></div>
+</div>
+
+
+<!-- STATUS BADGE -->
+
+{% if score >= 75 %}
+<div class="badge good">Excellent 🚀</div>
+
+{% elif score >= 50 %}
+<div class="badge mid">Moderate ⚡</div>
+
+{% else %}
+<div class="badge low">Needs Improvement ⚠️</div>
+{% endif %}
+
+
+<br><br>
+
+{% if score >= 75 %}
+<p style="color:#22c55e;">
+You're highly placement ready. Keep pushing 🚀
+</p>
+
+{% elif score >= 50 %}
+<p style="color:#facc15;">
+You're close — improve a few key areas ⚡
+</p>
+
+{% else %}
+<p style="color:#ef4444;">
+Focus on fundamentals and consistency ⚠️
+</p>
+{% endif %}
+
+
+<div class="ai-box">
+
+<h3>AI Career Insights</h3>
+
+<pre style="white-space:pre-wrap;">{{ ai_feedback }}</pre>
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

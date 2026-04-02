@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none;">◈ Career Compass</a></div>
+    <div class="nav-right">
+        <a href="/home" style="font-size: 13px; color: var(--text-muted);">← Back</a>
+    </div>
+</nav>
+
+<div class="career-container">
+
+    <div class="page-header">
+        <h2>Career Guidance</h2>
+        <p>Enter your area of interest to get tailored career path advice and learning recommendations.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" id="guidanceForm">
+
+            <div class="section-title">Area of Interest</div>
+            <input type="text"
+                   name="interest"
+                   value="{{ interest }}"
+                   placeholder="e.g. Artificial Intelligence, Web Development, Data Science, Cloud Computing"
+                   required>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;">
+                {% for domain in ['AI / ML', 'Web Dev', 'Data Science', 'Cloud', 'Cybersecurity', 'Mobile Dev'] %}
+                <button type="button"
+                    onclick="document.querySelector('[name=interest]').value = '{{ domain }}'"
+                    style="width: auto; padding: 6px 14px; font-size: 12px;
+                           background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25);
+                           border-radius: 6px; color: #a5b4fc;">
+                    {{ domain }}
+                </button>
+                {% endfor %}
+            </div>
+
+            <button type="submit" id="guidanceBtn">Get Career Guidance</button>
+        </form>
+    </div>
+
+    {% if advice %}
+    <div class="guidance-result" id="guidanceResult">
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #818cf8; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px;">
+            ✦ Guidance for {{ interest }}
+        </div>
+        {{ advice }}
+    </div>
+
+    <script>
+        document.getElementById('guidanceResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    </script>
+    {% endif %}
+
+</div>
+
+<script>
+    document.getElementById('guidanceForm').addEventListener('submit', function() {
+        document.getElementById('guidanceBtn').textContent = 'Generating...';
+        document.getElementById('guidanceBtn').disabled = true;
+    });
+</script>
+
+</body>
+</html>

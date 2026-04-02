@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <div style="margin-bottom: 28px;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px;">
+                ◈ Career Compass
+            </div>
+            <h1 style="font-size: 1.9rem; text-align: center;">Welcome back</h1>
+            <p class="subtitle">Sign in to your account to continue</p>
+        </div>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">USERNAME</div>
+            <input type="text" name="username" placeholder="Enter your username" required autocomplete="username">
+
+            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">PASSWORD</div>
+            <input type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+
+            <button type="submit" style="margin-top: 8px;">Sign In</button>
+        </form>
+
+        <div class="auth-links">
+            <a href="/signup">Create an account</a>
+            <a href="/guest">Continue as guest</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

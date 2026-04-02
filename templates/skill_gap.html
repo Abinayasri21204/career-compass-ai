@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Gap Detection — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none;">◈ Career Compass</a></div>
+    <div class="nav-right">
+        <a href="/home" style="font-size: 13px; color: var(--text-muted);">← Back</a>
+    </div>
+</nav>
+
+<div class="career-container">
+
+    <div class="page-header">
+        <h2>Skill Gap Detection</h2>
+        <p>Select your target role and enter your current skills to find what's missing.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" id="gapForm">
+
+            <div class="section-title">Target Role</div>
+            <select name="role" required>
+                {% for r in roles %}
+                    <option value="{{ r }}" {% if r == selected_role %}selected{% endif %}>{{ r }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="section-title">Your Current Skills</div>
+            <input type="text"
+                   name="skills"
+                   placeholder="e.g. Python, SQL, Git, Machine Learning"
+                   value="{{ skills_input }}"
+                   required>
+            <p style="font-size: 12px; color: var(--text-dim); margin-top: -10px; margin-bottom: 16px;">Separate skills with commas</p>
+
+            <button type="submit" id="gapBtn">Detect Skill Gaps</button>
+        </form>
+    </div>
+
+    {% if recommendations is defined and recommendations %}
+        <div class="result-card" id="gapResult">
+            <h3>Skills to Develop for {{ selected_role }}</h3>
+            <p>Based on your profile, here are the skills that will strengthen your candidacy:</p>
+
+            <div class="skill-tags">
+                {% for skill in recommendations %}
+                    <span class="skill-tag">+ {{ skill }}</span>
+                {% endfor %}
+            </div>
+
+            <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                Learning these <strong style="color: #a5b4fc;">{{ recommendations | length }} skill{{ 's' if recommendations | length != 1 else '' }}</strong>
+                will significantly boost your readiness for <strong style="color: #a5b4fc;">{{ selected_role }}</strong> roles.
+            </p>
+        </div>
+
+        <script>
+            document.getElementById('gapResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        </script>
+
+    {% elif selected_role and not recommendations %}
+        <div class="result-card" id="gapResult" style="text-align: center; border-color: rgba(52,211,153,0.3);">
+            <div style="font-size: 32px; margin-bottom: 12px;">✅</div>
+            <h3 style="color: #34d399;">All Required Skills Covered!</h3>
+            <p>Your skill set already meets the requirements for <strong style="color: #a5b4fc;">{{ selected_role }}</strong>. Great work!</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<script>
+    document.getElementById('gapForm').addEventListener('submit', function() {
+        document.getElementById('gapBtn').textContent = 'Analyzing...';
+        document.getElementById('gapBtn').disabled = true;
+    });
+</script>
+
+</body>
+</html>

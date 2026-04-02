@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personalized Roadmap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="home-body">
+
+<div class="career-container">
+
+    <h2>Personalized Roadmap</h2>
+
+    <form method="POST">
+
+        <input type="text"
+               name="role"
+               value="{{ role }}"
+               placeholder="Target Role (e.g. Software Developer)"
+               required>
+
+        <select name="experience">
+            <option value="beginner" {% if experience=="beginner" %}selected{% endif %}>Beginner</option>
+            <option value="intermediate" {% if experience=="intermediate" %}selected{% endif %}>Intermediate</option>
+        </select>
+
+        <button type="submit" onclick="this.innerText='Generating...';">
+            Generate Roadmap
+        </button>
+
+    </form>
+
+
+    {% if steps %}
+
+    <div class="roadmap-container">
+
+        <h3>Your Learning Path for {{ role }}</h3>
+
+        <div class="timeline">
+
+            {% for step in steps %}
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+                    <h4>Step {{ loop.index }}</h4>
+                    <p>{{ step }}</p>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
