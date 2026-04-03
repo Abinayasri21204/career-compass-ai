@@ -69,10 +69,9 @@ def send_reset_email(to_addr, token):
 # ── DB ────────────────────────────────────────────────────────────────────────
 def get_db():
     return mysql.connector.connect(
-        # DB host, user, password, name all read from environment variables
         host=os.getenv("DB_HOST", "localhost"),
         user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASS", "asdzxc@12345"),
+        password=os.getenv("DB_PASS", ""),      # ← remove hardcoded password here
         database=os.getenv("DB_NAME", "career_compass")
     )
 
