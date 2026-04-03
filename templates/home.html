@@ -6,24 +6,93 @@
     <title>Home — Career Compass</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body class="home-body">
 
-<!-- NAVBAR -->
 <nav class="navbar">
     <div class="logo">◈ Career Compass</div>
-    <div class="nav-right">
+    <div class="nav-right" style="gap:10px;">
+        {% if not is_guest %}
+        <a href="/domains" style="font-size:12px;padding:6px 12px;border:1px solid var(--border);
+           border-radius:6px;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+            🌐 {{ active_domain }}
+        </a>
+        {% endif %}
         <span class="username">👤 {{ username }}</span>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <a href="/logout" class="logout-btn">{% if is_guest %}Exit Guest{% else %}Logout{% endif %}</a>
     </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-content">
         <div class="hero-badge">✦ AI-Powered Placement Prep</div>
         <h1>Your Career.<br>Your Direction.</h1>
-        <p>Evaluate your placement readiness, discover skill gaps, and get a personalized AI-powered roadmap to your dream role.</p>
+        <p>Evaluate your readiness, discover skill gaps, and get a personalised AI-powered roadmap.</p>
+
+        {% if not is_guest %}
+        <!-- Level + Streak bar -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px;
+                    margin-bottom:24px;flex-wrap:wrap;">
+
+            <!-- Level badge -->
+            <div style="display:inline-flex;align-items:center;gap:10px;
+                        background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);
+                        border-radius:100px;padding:8px 18px;font-size:13px;">
+                <span style="font-size:16px;">{{ level_icon }}</span>
+                <div style="text-align:left;">
+                    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#a5b4fc;font-size:13px;">
+                        Lv.{{ level }} {{ level_name }}
+                    </div>
+                    <div style="font-size:11px;color:var(--text-dim);">{{ xp }} / {{ next_xp }} XP</div>
+                </div>
+            </div>
+
+            <!-- XP progress -->
+            <div style="width:120px;">
+                <div style="height:6px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;">
+                    <div style="height:100%;border-radius:100px;
+                                background:linear-gradient(90deg,#6366f1,#22d3ee);
+                                width:{{ [(xp / next_xp * 100) if next_xp else 100, 100]|min }}%;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak -->
+            {% if streak > 0 %}
+            <div style="display:inline-flex;align-items:center;gap:8px;
+                        background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);
+                        border-radius:100px;padding:8px 16px;font-size:13px;">
+                <span style="font-size:16px;">🔥</span>
+                <div>
+                    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fbbf24;font-size:13px;">
+                        {{ streak }}-day streak
+                    </div>
+                    <div style="font-size:11px;color:var(--text-dim);">Keep it going!</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Last score -->
+            {% if last_score is not none %}
+            <div style="display:inline-flex;align-items:center;gap:8px;
+                        background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);
+                        border-radius:100px;padding:8px 16px;font-size:13px;">
+                <span style="color:var(--text-muted);">Last score:</span>
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;
+                             color:{% if last_score >= 75 %}#34d399{% elif last_score >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                    {{ last_score|int }}%
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <!-- Guest banner -->
+        <div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);
+                    border-radius:12px;padding:12px 20px;margin-bottom:24px;font-size:13px;color:#fbbf24;">
+            👁 You're in <strong>Guest Mode</strong> — most features are locked.
+            <a href="/signup" style="color:#a5b4fc;margin-left:8px;">Sign up free →</a>
+        </div>
+        {% endif %}
+
         <div class="hero-buttons">
             <a href="/placement" class="primary-btn">Start Analysis →</a>
             <a href="#features" class="secondary-btn">Explore Features</a>
@@ -31,7 +100,6 @@
     </div>
 </section>
 
-<!-- FEATURES -->
 <section id="features" class="features">
 
     <div class="feature-card" onclick="window.location.href='/placement'">
@@ -46,21 +114,52 @@
         <p>Compare your skills against role requirements and find what's missing.</p>
     </div>
 
+    <div class="feature-card" onclick="window.location.href='/assessment'">
+        <span class="feature-icon">✅</span>
+        <h3>AI Assessment</h3>
+        <p>10-question quizzes with coding problems — adapts to your past performance.</p>
+    </div>
+
+    <div class="feature-card" onclick="window.location.href='/leaderboard'">
+        <span class="feature-icon">🏆</span>
+        <h3>Leaderboard</h3>
+        <p>See how you rank against peers — LeetCode style. Climb the levels.</p>
+    </div>
+
     <div class="feature-card" onclick="window.location.href='/roadmap'">
         <span class="feature-icon">🛣️</span>
         <h3>Personalized Roadmap</h3>
         <p>A structured, step-by-step learning plan tailored to your target role.</p>
     </div>
 
+    <div class="feature-card" onclick="window.location.href='/companies'">
+        <span class="feature-icon">🏢</span>
+        <h3>Company Openings</h3>
+        <p>Browse companies, set your targets, and get AI tips for each one.</p>
+    </div>
+
+    <div class="feature-card" onclick="window.location.href='/progress'">
+        <span class="feature-icon">📈</span>
+        <h3>Progress Dashboard</h3>
+        <p>Track your readiness trend and assessment performance over time.</p>
+    </div>
+
     <div class="feature-card" onclick="window.location.href='/guidance'">
         <span class="feature-icon">🚀</span>
         <h3>Career Guidance</h3>
-        <p>Domain-specific advice, tools to learn, and steps to grow in your field.</p>
+        <p>Domain-specific career paths, tools, companies, and action steps.</p>
     </div>
+
+    {% if not is_guest %}
+    <div class="feature-card" onclick="window.location.href='/domains'">
+        <span class="feature-icon">🌐</span>
+        <h3>My Domains</h3>
+        <p>Switch between fields like Duolingo languages — data stays separate.</p>
+    </div>
+    {% endif %}
 
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
     <p>© 2026 Career Compass · AI-Powered Career System</p>
 </footer>

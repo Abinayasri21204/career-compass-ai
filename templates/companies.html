@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Openings — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right"><a href="/home" style="font-size:13px;color:var(--text-muted);">← Back</a></div>
+</nav>
+
+<div class="career-container" style="max-width:1000px;">
+
+    <div class="page-header">
+        <h2>Company Openings</h2>
+        <p>Browse companies, set your targets, and get AI preparation tips for each one.</p>
+    </div>
+
+    <!-- Filter bar -->
+    <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;" id="filterBar">
+        {% for label, val in [('All','all'),('Service Based','service'),('Product Based','product'),('Featured','featured')] %}
+        <button type="button" onclick="filterCompanies('{{ val }}')" data-filter="{{ val }}"
+                style="width:auto;padding:8px 18px;font-size:13px;border-radius:100px;
+                       background:{% if loop.first %}rgba(99,102,241,.2);border-color:rgba(99,102,241,.5);color:#a5b4fc;{% else %}rgba(10,14,30,.7);border:1px solid var(--border);color:var(--text-muted);{% endif %}
+                       transition:all .2s;">
+            {{ label }}
+        </button>
+        {% endfor %}
+        <input type="text" id="searchBox" placeholder="Search companies..."
+               onkeyup="searchCompanies(this.value)"
+               style="width:auto;flex:1;min-width:180px;margin-bottom:0;padding:8px 16px;font-size:13px;">
+    </div>
+
+    <!-- Save targets form -->
+    <form method="POST" id="targetForm">
+        <input type="hidden" name="action" value="save_targets">
+
+    <!-- Company grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:28px;" id="companyGrid">
+        {% for co in all_companies %}
+        <div class="company-card"
+             data-type="{{ co.type }}"
+             data-featured="{{ co.is_featured }}"
+             data-name="{{ co.name|lower }}"
+             style="background:var(--bg-card);border:1px solid
+                    {% if co.name in target_companies %}rgba(99,102,241,.45){% else %}var(--border){% endif %};
+                    border-radius:var(--radius);padding:20px;transition:all .2s;
+                    {% if co.name in target_companies %}box-shadow:0 0 18px rgba(99,102,241,.12);{% endif %}">
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+                <div>
+                    <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+                                color:var(--text-main);margin-bottom:4px;">{{ co.name }}</div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <span style="font-size:11px;padding:3px 10px;border-radius:100px;
+                                     {% if co.type == 'product' %}background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);
+                                     {% elif co.type == 'service' %}background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);
+                                     {% else %}background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.2);{% endif %}
+                                     font-family:'Space Grotesk',sans-serif;font-weight:600;">
+                            {{ co.type|title }}
+                        </span>
+                        {% if co.is_featured %}
+                        <span style="font-size:11px;padding:3px 10px;border-radius:100px;
+                                     background:rgba(251,191,36,.12);color:#fbbf24;
+                                     border:1px solid rgba(251,191,36,.25);
+                                     font-family:'Space Grotesk',sans-serif;font-weight:600;">
+                            ★ Featured
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Target checkbox -->
+                <label style="cursor:pointer;display:flex;align-items:center;gap:6px;
+                              font-size:12px;color:var(--text-muted);">
+                    <input type="checkbox" name="companies" value="{{ co.name }}"
+                           {% if co.name in target_companies %}checked{% endif %}
+                           style="width:auto;accent-color:#6366f1;width:16px;height:16px;"
+                           onchange="this.closest('.company-card').style.borderColor=this.checked?'rgba(99,102,241,.45)':'var(--border)'">
+                    Target
+                </label>
+            </div>
+
+            {% if co.description %}
+            <p style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">{{ co.description }}</p>
+            {% endif %}
+
+            {% if co.careers_url %}
+            <a href="{{ co.careers_url }}" target="_blank" rel="noopener"
+               style="font-size:12px;color:#818cf8;display:inline-flex;align-items:center;gap:4px;">
+                View Openings ↗
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit" id="saveBtn" style="max-width:280px;margin:0 auto;display:block;">
+        Save My Target Companies
+    </button>
+    </form>
+
+    <!-- Target companies summary -->
+    {% if target_companies %}
+    <div style="margin-top:36px;">
+        <div class="section-title">Your Target Companies ({{ target_companies|length }})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;">
+            {% for co in target_companies %}
+            <span class="skill-tag">🎯 {{ co }}</span>
+            {% endfor %}
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:12px;">
+            Use the <a href="/placement">Placement Analyzer</a> and
+            <a href="/assessment">AI Assessment</a> to prepare specifically for these companies.
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+let activeFilter = 'all';
+
+function filterCompanies(type) {
+    activeFilter = type;
+    document.querySelectorAll('#filterBar button').forEach(btn => {
+        const isActive = btn.dataset.filter === type;
+        btn.style.background    = isActive ? 'rgba(99,102,241,.2)' : 'rgba(10,14,30,.7)';
+        btn.style.borderColor   = isActive ? 'rgba(99,102,241,.5)' : 'var(--border)';
+        btn.style.color         = isActive ? '#a5b4fc' : 'var(--text-muted)';
+    });
+    applyFilters();
+}
+
+function searchCompanies(q) { applyFilters(q.toLowerCase()); }
+
+function applyFilters(search='') {
+    document.querySelectorAll('.company-card').forEach(card => {
+        const typeMatch    = activeFilter==='all' || card.dataset.type===activeFilter
+                             || (activeFilter==='featured' && card.dataset.featured==='1');
+        const searchMatch  = !search || card.dataset.name.includes(search);
+        card.parentElement.style.display = (typeMatch && searchMatch) ? '' : 'none';
+    });
+}
+
+document.getElementById('targetForm').addEventListener('submit', function() {
+    document.getElementById('saveBtn').textContent = 'Saving...';
+});
+</script>
+
+</body>
+</html>

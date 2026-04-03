@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up to Continue — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="auth-container">
+<div class="auth-card" style="text-align:center;">
+
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;
+                background:linear-gradient(135deg,#a5b4fc,#22d3ee);
+                -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                background-clip:text;margin-bottom:24px;">◈ Career Compass</div>
+
+    <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+
+    <h1 style="font-size:1.6rem;margin-bottom:12px;">{{ feature }} is locked</h1>
+
+    <p style="color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:28px;">
+        You're currently in <strong style="color:#fbbf24;">Guest Mode</strong>.<br>
+        Create a free account to unlock {{ feature }} and all other features — it only takes 30 seconds.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+        <a href="/signup" class="primary-btn" style="display:block;text-align:center;">
+            Create Free Account →
+        </a>
+        <a href="/" style="font-size:13px;color:var(--text-muted);">← Back to sign in</a>
+        <a href="/home" style="font-size:13px;color:var(--text-dim);">Continue exploring as guest</a>
+    </div>
+
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">What you get with a free account:</div>
+        <div style="display:flex;flex-direction:column;gap:8px;text-align:left;">
+            {% for feat in ["📊 Placement Readiness Analyzer","🧠 Skill Gap Detection","✅ AI Assessments (non-repeating, 10 questions)","🏆 Leaderboard & Level System","📈 Progress Dashboard","🛣️ Personalized Roadmap","🚀 Career Guidance","🌐 Multi-domain Profiles (Duolingo-style)"] %}
+            <div style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+                <span style="color:#34d399;font-size:11px;">✓</span> {{ feat }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+</div>
+</body>
+</html>

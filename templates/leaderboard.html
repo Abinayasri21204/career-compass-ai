@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right"><a href="/home" style="font-size:13px;color:var(--text-muted);">← Back</a></div>
+</nav>
+
+<div class="career-container" style="max-width:860px;">
+
+    <div class="page-header">
+        <h2>Leaderboard</h2>
+        <p>Ranked by assessments completed × performance. Take more quizzes to climb the ranks.</p>
+    </div>
+
+    {% if my_rank %}
+    <div style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);
+                border-radius:var(--radius);padding:18px 24px;margin-bottom:24px;
+                display:flex;align-items:center;gap:16px;">
+        <div style="font-size:24px;">🎯</div>
+        <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#a5b4fc;font-size:15px;">
+                Your Rank: #{{ my_rank }}
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);">Keep taking assessments to improve your rank!</div>
+        </div>
+        <a href="/assessment" class="primary-btn" style="margin-left:auto;padding:10px 20px;font-size:13px;">
+            Take Assessment →
+        </a>
+    </div>
+    {% endif %}
+
+    {% if not board %}
+    <div style="text-align:center;padding:60px 20px;color:var(--text-muted);">
+        <div style="font-size:48px;margin-bottom:16px;">🏆</div>
+        <h3 style="color:var(--text-main);margin-bottom:8px;">No rankings yet</h3>
+        <p>Be the first! Take an assessment to appear on the leaderboard.</p>
+        <a href="/assessment" class="primary-btn" style="display:inline-block;margin-top:20px;">Start Assessment →</a>
+    </div>
+    {% else %}
+
+    <!-- Top 3 podium -->
+    {% if board|length >= 3 %}
+    <div style="display:flex;align-items:flex-end;justify-content:center;gap:12px;margin-bottom:32px;padding:24px;">
+
+        <!-- 2nd place -->
+        <div style="text-align:center;flex:1;max-width:180px;">
+            <div style="font-size:28px;margin-bottom:8px;">🥈</div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);
+                        padding:16px;height:120px;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+                            color:var(--text-main);">{{ board[1].username }}</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">{{ board[1].level_icon }} {{ board[1].level_name }}</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#94a3b8;margin-top:8px;">{{ board[1].xp }} XP</div>
+            </div>
+        </div>
+
+        <!-- 1st place -->
+        <div style="text-align:center;flex:1;max-width:200px;">
+            <div style="font-size:36px;margin-bottom:8px;">🥇</div>
+            <div style="background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(34,211,238,.1));
+                        border:1px solid rgba(99,102,241,.4);border-radius:var(--radius-sm);
+                        padding:20px;height:150px;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
+                            color:#a5b4fc;">{{ board[0].username }}</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">{{ board[0].level_icon }} {{ board[0].level_name }}</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;
+                            color:#fbbf24;margin-top:8px;">{{ board[0].xp }} XP</div>
+            </div>
+        </div>
+
+        <!-- 3rd place -->
+        <div style="text-align:center;flex:1;max-width:180px;">
+            <div style="font-size:28px;margin-bottom:8px;">🥉</div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);
+                        padding:16px;height:100px;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+                            color:var(--text-main);">{{ board[2].username }}</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">{{ board[2].level_icon }} {{ board[2].level_name }}</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#cd7f32;margin-top:8px;">{{ board[2].xp }} XP</div>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+    <!-- Full table -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;">
+            <thead>
+                <tr style="border-bottom:1px solid var(--border);font-size:11px;color:var(--text-muted);
+                           font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.08em;
+                           background:rgba(10,14,30,.4);">
+                    <th style="padding:14px 20px;text-align:center;font-weight:600;width:60px;">Rank</th>
+                    <th style="padding:14px 20px;text-align:left;font-weight:600;">User</th>
+                    <th style="padding:14px 20px;text-align:center;font-weight:600;">Level</th>
+                    <th style="padding:14px 20px;text-align:center;font-weight:600;">XP</th>
+                    <th style="padding:14px 20px;text-align:center;font-weight:600;">Assessments</th>
+                    <th style="padding:14px 20px;text-align:center;font-weight:600;">Best Score</th>
+                    <th style="padding:14px 20px;text-align:center;font-weight:600;">Topics</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in board %}
+                <tr style="border-bottom:1px solid rgba(99,102,241,.06);font-size:14px;
+                           transition:background .15s;
+                           {% if entry.username == session.get('user','') %}background:rgba(99,102,241,.08);{% endif %}"
+                    onmouseover="this.style.background='rgba(99,102,241,.06)'"
+                    onmouseout="this.style.background='{% if entry.username == session.get("user","") %}rgba(99,102,241,.08){% else %}{% endif %}'">
+
+                    <td style="padding:14px 20px;text-align:center;">
+                        {% if entry.rank == 1 %}
+                        <span style="font-size:18px;">🥇</span>
+                        {% elif entry.rank == 2 %}
+                        <span style="font-size:18px;">🥈</span>
+                        {% elif entry.rank == 3 %}
+                        <span style="font-size:18px;">🥉</span>
+                        {% else %}
+                        <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text-dim);">
+                            #{{ entry.rank }}
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td style="padding:14px 20px;">
+                        <div style="font-weight:500;color:var(--text-main);font-family:'Space Grotesk',sans-serif;">
+                            {{ entry.username }}
+                            {% if entry.username == session.get('user','') %}
+                            <span style="font-size:11px;background:rgba(99,102,241,.15);color:#818cf8;
+                                         border-radius:4px;padding:2px 8px;margin-left:8px;">You</span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td style="padding:14px 20px;text-align:center;">
+                        <span style="font-size:16px;" title="{{ entry.level_name }}">{{ entry.level_icon }}</span>
+                        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">{{ entry.level_name }}</div>
+                    </td>
+
+                    <td style="padding:14px 20px;text-align:center;font-family:'Space Grotesk',sans-serif;
+                               font-weight:700;color:#a5b4fc;">
+                        {{ entry.xp }}
+                    </td>
+
+                    <td style="padding:14px 20px;text-align:center;color:var(--text-muted);">
+                        {{ entry.total_assessments }}
+                    </td>
+
+                    <td style="padding:14px 20px;text-align:center;font-family:'Space Grotesk',sans-serif;
+                               font-weight:700;color:{% if entry.best_score >= 70 %}#34d399{% elif entry.best_score >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                        {{ entry.best_score|int }}%
+                    </td>
+
+                    <td style="padding:14px 20px;text-align:center;color:var(--text-muted);">
+                        {{ entry.topics_covered }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Level legend -->
+    <div style="margin-top:24px;background:var(--bg-card);border:1px solid var(--border);
+                border-radius:var(--radius);padding:20px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+                    color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">
+            Level System
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            {% for icon, name, req in [('⚪','Newcomer',0),('🟤','Beginner',50),('🟢','Explorer',120),('🔵','Practitioner',250),('🟣','Achiever',450),('🟠','Expert',700),('🔴','Elite',1000),('🌟','Legend',1400)] %}
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);
+                        background:rgba(10,14,30,.5);border:1px solid var(--border);
+                        border-radius:6px;padding:5px 10px;">
+                {{ icon }} <strong style="color:var(--text-main);">{{ name }}</strong> <span style="color:var(--text-dim);">{{ req }}+ XP</span>
+            </div>
+            {% endfor %}
+        </div>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:10px;">
+            XP = (Assessments × 10) + Best Score. Take more quizzes to earn XP!
+        </p>
+    </div>
+
+    {% endif %}
+
+</div>
+</body>
+</html>

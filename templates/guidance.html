@@ -9,65 +9,162 @@
 <body class="home-body">
 
 <nav class="navbar">
-    <div class="logo"><a href="/home" style="background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none;">◈ Career Compass</a></div>
-    <div class="nav-right">
-        <a href="/home" style="font-size: 13px; color: var(--text-muted);">← Back</a>
-    </div>
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right"><a href="/home" style="font-size:13px;color:var(--text-muted);">← Back</a></div>
 </nav>
 
 <div class="career-container">
 
     <div class="page-header">
         <h2>Career Guidance</h2>
-        <p>Enter your area of interest to get tailored career path advice and learning recommendations.</p>
+        <p>Get a complete career roadmap: progression, tools, top companies, and action steps.</p>
     </div>
 
     <div class="form-card">
         <form method="POST" id="guidanceForm">
-
             <div class="section-title">Area of Interest</div>
-            <input type="text"
-                   name="interest"
-                   value="{{ interest }}"
-                   placeholder="e.g. Artificial Intelligence, Web Development, Data Science, Cloud Computing"
+            <input type="text" name="interest" value="{{ interest }}"
+                   placeholder="e.g. Software Development, Data Science, Mechanical Engineering, Biotechnology..."
                    required>
 
-            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;">
-                {% for domain in ['AI / ML', 'Web Dev', 'Data Science', 'Cloud', 'Cybersecurity', 'Mobile Dev'] %}
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+                {% for domain in ['Software Dev','Data Science','AI / ML','Web Dev','Cloud','Cybersecurity','Mechanical','Biotechnology','Finance','UI/UX Design'] %}
                 <button type="button"
-                    onclick="document.querySelector('[name=interest]').value = '{{ domain }}'"
-                    style="width: auto; padding: 6px 14px; font-size: 12px;
-                           background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25);
-                           border-radius: 6px; color: #a5b4fc;">
+                    onclick="document.querySelector('[name=interest]').value='{{ domain }}'"
+                    style="width:auto;padding:6px 14px;font-size:12px;
+                           background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);
+                           border-radius:6px;color:#a5b4fc;">
                     {{ domain }}
                 </button>
                 {% endfor %}
             </div>
 
-            <button type="submit" id="guidanceBtn">Get Career Guidance</button>
+            <button type="submit" id="guidanceBtn">Get Career Guidance →</button>
         </form>
     </div>
 
-    {% if advice %}
+    {% if guidance_data %}
+    <div id="guidanceResult">
+
+        <!-- Header -->
+        <div style="background:var(--bg-card);border:1px solid rgba(99,102,241,.3);
+                    border-radius:var(--radius);padding:28px;margin-bottom:20px;
+                    box-shadow:0 0 30px rgba(99,102,241,.08);">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;
+                        color:#818cf8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">
+                Career Path
+            </div>
+            <h2 style="font-size:1.4rem;margin-bottom:14px;">{{ guidance_data.title }}</h2>
+            <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                {% set path_parts = guidance_data.path.split('→') %}
+                {% for part in path_parts %}
+                <div style="display:flex;align-items:center;gap:0;">
+                    <span style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);
+                                 border-radius:6px;padding:6px 14px;font-size:13px;color:#a5b4fc;
+                                 font-family:'Space Grotesk',sans-serif;font-weight:500;white-space:nowrap;">
+                        {{ part.strip() }}
+                    </span>
+                    {% if not loop.last %}
+                    <span style="color:var(--text-dim);margin:0 6px;font-size:14px;">→</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 3-column grid: skills / companies / steps -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+            <!-- Key Skills -->
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+                            color:#22d3ee;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;">
+                    🛠 Key Skills to Master
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    {% for skill in guidance_data.skills %}
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
+                        <span style="width:6px;height:6px;border-radius:50%;background:#22d3ee;flex-shrink:0;"></span>
+                        {{ skill }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Top Companies -->
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+                            color:#34d399;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;">
+                    🏢 Top Hiring Companies
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    {% for co in guidance_data.companies %}
+                    <span style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);
+                                 color:#34d399;padding:5px 12px;border-radius:6px;font-size:12px;
+                                 font-family:'Space Grotesk',sans-serif;font-weight:500;">
+                        {{ co }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Steps (full width) -->
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+                        color:#a5b4fc;text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;">
+                📋 Your 7-Step Action Plan
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                {% for step in guidance_data.steps %}
+                <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 16px;
+                            background:rgba(10,14,30,.5);border:1px solid rgba(99,102,241,.1);
+                            border-radius:8px;">
+                    <div style="min-width:26px;height:26px;border-radius:50%;
+                                background:linear-gradient(135deg,#6366f1,#4f46e5);
+                                display:flex;align-items:center;justify-content:center;
+                                font-family:'Space Grotesk',sans-serif;font-size:12px;
+                                font-weight:700;color:white;flex-shrink:0;">
+                        {{ loop.index }}
+                    </div>
+                    <span style="font-size:14px;color:var(--text-muted);line-height:1.5;padding-top:3px;">{{ step }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="display:flex;gap:14px;margin-top:20px;flex-wrap:wrap;">
+            <a href="/assessment" class="primary-btn">Take an Assessment →</a>
+            <a href="/roadmap" class="secondary-btn">Generate Full Roadmap</a>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('guidanceResult').scrollIntoView({ behavior:'smooth', block:'start' });
+    </script>
+
+    {% elif advice %}
     <div class="guidance-result" id="guidanceResult">
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #818cf8; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+                    color:#818cf8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;">
             ✦ Guidance for {{ interest }}
         </div>
         {{ advice }}
     </div>
-
     <script>
-        document.getElementById('guidanceResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('guidanceResult').scrollIntoView({ behavior:'smooth', block:'start' });
     </script>
     {% endif %}
 
 </div>
 
 <script>
-    document.getElementById('guidanceForm').addEventListener('submit', function() {
-        document.getElementById('guidanceBtn').textContent = 'Generating...';
-        document.getElementById('guidanceBtn').disabled = true;
-    });
+document.getElementById('guidanceForm').addEventListener('submit', function() {
+    document.getElementById('guidanceBtn').textContent = 'Generating...';
+    document.getElementById('guidanceBtn').disabled = true;
+});
 </script>
 
 </body>

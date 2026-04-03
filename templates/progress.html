@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right"><a href="/home" style="font-size:13px;color:var(--text-muted);">← Back</a></div>
+</nav>
+
+<div class="career-container">
+
+    <div class="page-header">
+        <h2>Progress Dashboard</h2>
+        <p>Tracking your growth in <strong style="color:#a5b4fc;">{{ domain }}</strong></p>
+    </div>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px;">
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.07em;">Latest Score</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;
+                        color:{% if latest_score >= 75 %}#34d399{% elif latest_score >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                {{ latest_score }}%
+            </div>
+        </div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.07em;">Analyses Done</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#818cf8;">{{ history|length }}</div>
+        </div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.07em;">Topics Assessed</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#22d3ee;">{{ assessment_stats|length }}</div>
+        </div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.07em;">Topics Mastered</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#34d399;">
+                {{ assessment_stats|selectattr('best','ge',70)|list|length }}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Score history chart -->
+    {% if history %}
+    <div style="margin-bottom:32px;">
+        <div class="section-title">Readiness Score History</div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+            <div style="display:flex;align-items:flex-end;gap:8px;height:120px;">
+                {% for h in history|reverse %}
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="font-size:11px;color:var(--text-muted);">{{ h.score|int }}%</div>
+                    <div style="width:100%;border-radius:4px 4px 0 0;
+                                background:{% if h.score >= 75 %}linear-gradient(to top,#34d399,#22d3ee){% elif h.score >= 50 %}linear-gradient(to top,#fbbf24,#f97316){% else %}linear-gradient(to top,#f87171,#ec4899){% endif %};
+                                height:{{ [h.score, 5]|max }}px;min-height:8px;transition:height .5s;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+                {% for h in history|reverse %}
+                <div style="flex:1;font-size:10px;color:var(--text-dim);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    {{ h.created_at.strftime('%b %d') if h.created_at else '' }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Assessment performance -->
+    {% if assessment_stats %}
+    <div style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:12px;">Assessment Performance by Topic</div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+            {% for stat in assessment_stats %}
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(99,102,241,.06);
+                        {% if loop.last %}border-bottom:none;{% endif %}">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                    <div style="font-size:14px;color:var(--text-main);font-weight:500;">{{ stat.topic }}</div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span style="font-size:12px;color:var(--text-muted);">{{ stat.attempts }} attempt{{ 's' if stat.attempts != 1 else '' }}</span>
+                        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;
+                                     color:{% if stat.best >= 70 %}#34d399{% elif stat.best >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                            {{ stat.best|int }}%
+                        </span>
+                    </div>
+                </div>
+                <div class="progress-bar" style="height:6px;">
+                    <div class="progress-fill" style="width:{{ stat.best }}%;
+                         {% if stat.best >= 70 %}background:linear-gradient(90deg,#34d399,#22d3ee);
+                         {% elif stat.best >= 50 %}background:linear-gradient(90deg,#fbbf24,#f97316);
+                         {% else %}background:linear-gradient(90deg,#f87171,#ec4899);{% endif %}">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- CTAs -->
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="/placement" class="primary-btn">Run Placement Analysis →</a>
+        <a href="/assessment" class="secondary-btn">Take an Assessment</a>
+    </div>
+
+</div>
+</body>
+</html>

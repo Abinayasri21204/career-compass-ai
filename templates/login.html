@@ -7,39 +7,63 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
 <div class="auth-container">
-    <div class="auth-card">
+<div class="auth-card">
 
-        <div style="margin-bottom: 28px;">
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px;">
-                ◈ Career Compass
-            </div>
-            <h1 style="font-size: 1.9rem; text-align: center;">Welcome back</h1>
-            <p class="subtitle">Sign in to your account to continue</p>
-        </div>
-
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-
-        <form method="POST">
-            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">USERNAME</div>
-            <input type="text" name="username" placeholder="Enter your username" required autocomplete="username">
-
-            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">PASSWORD</div>
-            <input type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
-
-            <button type="submit" style="margin-top: 8px;">Sign In</button>
-        </form>
-
-        <div class="auth-links">
-            <a href="/signup">Create an account</a>
-            <a href="/guest">Continue as guest</a>
-        </div>
-
+    <div style="margin-bottom:28px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;
+                    background:linear-gradient(135deg,#a5b4fc,#22d3ee);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                    background-clip:text;margin-bottom:20px;">◈ Career Compass</div>
+        <h1 style="font-size:1.9rem;text-align:center;">Welcome back</h1>
+        <p class="subtitle">Sign in to continue your journey</p>
     </div>
-</div>
 
+    {% if success %}
+        <div style="background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);
+                    padding:11px 16px;border-radius:8px;margin-bottom:16px;
+                    color:#34d399;text-align:center;font-size:13px;">{{ success }}</div>
+    {% endif %}
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+    <form method="POST" id="loginForm">
+        <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">USERNAME OR EMAIL</div>
+        <input type="text" name="username" placeholder="Enter username or email" required autocomplete="username">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">PASSWORD</span>
+            <a href="/forgot-password" style="font-size:12px;color:var(--text-muted);">Forgot password?</a>
+        </div>
+        <input type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+
+        <button type="submit" style="margin-top:8px;">Sign In</button>
+    </form>
+
+    <!-- Divider -->
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:12px;color:var(--text-dim);">or</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+
+    <!-- Guest login -->
+    <form method="POST">
+        <input type="hidden" name="guest" value="1">
+        <button type="submit"
+            style="background:transparent;border:1px solid var(--border);color:var(--text-muted);
+                   font-size:13px;padding:12px;">
+            👁 Continue as Guest
+        </button>
+    </form>
+    <p style="font-size:11px;color:var(--text-dim);text-align:center;margin-top:8px;">
+        Guest mode lets you explore the app — sign up to unlock all features.
+    </p>
+
+    <div class="auth-links" style="margin-top:16px;">
+        <a href="/signup">Create an account</a>
+    </div>
+
+</div>
+</div>
 </body>
 </html>

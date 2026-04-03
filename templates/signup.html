@@ -3,45 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up — Career Compass</title>
+    <title>Create Account — Career Compass</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<div class="auth-container" style="padding:40px 20px;">
+<div class="auth-card" style="max-width:520px;">
 
-<div class="auth-container">
-    <div class="auth-card">
-
-        <div style="margin-bottom: 28px;">
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #a5b4fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px;">
-                ◈ Career Compass
-            </div>
-            <h1 style="font-size: 1.9rem; text-align: center;">Create account</h1>
-            <p class="subtitle">Start your placement preparation journey</p>
-        </div>
-
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-
-        <form method="POST">
-            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">USERNAME</div>
-            <input type="text" name="username" placeholder="Choose a username" required autocomplete="username">
-
-            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">EMAIL</div>
-            <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
-
-            <div style="margin-bottom: 4px; font-size: 12px; color: var(--text-muted); text-align: left; font-weight: 500;">PASSWORD</div>
-            <input type="password" name="password" placeholder="Create a password" required autocomplete="new-password">
-
-            <button type="submit" style="margin-top: 8px;">Create Account</button>
-        </form>
-
-        <div class="auth-links" style="justify-content: center;">
-            <a href="/">Already have an account? Sign in</a>
-        </div>
-
+    <div style="margin-bottom:28px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;
+                    background:linear-gradient(135deg,#a5b4fc,#22d3ee);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                    background-clip:text;margin-bottom:20px;">◈ Career Compass</div>
+        <h1 style="font-size:1.9rem;text-align:center;">Create account</h1>
+        <p class="subtitle">Start your placement preparation journey</p>
     </div>
-</div>
 
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+    <form method="POST">
+
+        <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">FULL NAME *</div>
+        <input type="text" name="fullname" placeholder="Your full name" required autocomplete="name">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+                <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">USERNAME *</div>
+                <input type="text" name="username" placeholder="e.g. john_doe" required style="margin-bottom:0;">
+            </div>
+            <div>
+                <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">EMAIL *</div>
+                <input type="email" name="email" placeholder="your@email.com" required style="margin-bottom:0;">
+            </div>
+        </div>
+        <div style="height:16px;"></div>
+
+        <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">PASSWORD *</div>
+        <input type="password" name="password" placeholder="Create a strong password" required autocomplete="new-password">
+
+        <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">MOBILE <span style="color:var(--text-dim);font-size:11px;">(optional)</span></div>
+        <input type="tel" name="mobile" placeholder="+91 98765 43210">
+
+        <div style="margin-bottom:4px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">PRIMARY DOMAIN *</div>
+        <select name="domain" required>
+            <option value="" disabled selected>Select your primary field of study</option>
+            <option>Computer Engineering</option>
+            <option>Electronics &amp; Communication</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Biotechnology</option>
+            <option>Chemical Engineering</option>
+            <option>Electrical Engineering</option>
+            <option>Information Technology</option>
+            <option>Business Administration</option>
+            <option>Finance &amp; Accounting</option>
+            <option>Data Science &amp; AI</option>
+            <option>Design &amp; UX</option>
+            <option>Healthcare &amp; Medicine</option>
+            <option>Law &amp; Legal Studies</option>
+            <option>Marketing &amp; Media</option>
+        </select>
+
+        <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:.05em;">TARGET COMPANY TYPE *</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px;" id="prefGrid">
+            {% for val, label in [('service','Service Based'),('product','Product Based'),('both','Both')] %}
+            <label class="pref-option" data-val="{{ val }}"
+                   style="display:flex;align-items:center;justify-content:center;gap:8px;
+                          background:rgba(10,14,30,.7);border:1px solid var(--border);
+                          border-radius:8px;padding:11px 8px;cursor:pointer;font-size:13px;
+                          color:var(--text-muted);transition:all .2s;
+                          {% if val=='both' %}background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.5);color:#a5b4fc;{% endif %}">
+                <input type="radio" name="pref_type" value="{{ val }}" {% if val=='both' %}checked{% endif %}
+                       style="width:auto;margin:0;accent-color:#6366f1;">
+                {{ label }}
+            </label>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Create Account →</button>
+    </form>
+
+    <div class="auth-links" style="justify-content:center;margin-top:20px;">
+        <a href="/">Already have an account? Sign in</a>
+    </div>
+
+</div>
+</div>
+<script>
+document.querySelectorAll('.pref-option').forEach(lbl => {
+    lbl.addEventListener('click', () => {
+        document.querySelectorAll('.pref-option').forEach(l => {
+            l.style.background = 'rgba(10,14,30,.7)';
+            l.style.borderColor = 'var(--border)';
+            l.style.color = 'var(--text-muted)';
+        });
+        lbl.style.background = 'rgba(99,102,241,.15)';
+        lbl.style.borderColor = 'rgba(99,102,241,.5)';
+        lbl.style.color = '#a5b4fc';
+    });
+});
+</script>
 </body>
 </html>

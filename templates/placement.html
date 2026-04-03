@@ -1,253 +1,246 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Placement Readiness Analyzer</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Readiness Analyzer — Career Compass</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-<style>
-
-.section-title{
-margin-top:25px;
-margin-bottom:10px;
-font-size:18px;
-color:#38bdf8;
-}
-
-.skill-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:14px;
-margin-bottom:25px;
-}
-
-.skill-item{
-display:flex;
-align-items:center;
-gap:12px;
-background:rgba(0,0,0,0.25);
-padding:10px;
-border-radius:10px;
-}
-
-.skill-item input{
-transform:scale(1.4);
-cursor:pointer;
-}
-
-.result-box{
-margin-top:40px;
-padding:30px;
-background:rgba(0,0,0,0.35);
-border-radius:16px;
-text-align:center;
-box-shadow:0 20px 40px rgba(0,0,0,0.5);
-}
-
-.progress-bar{
-width:100%;
-height:14px;
-background:#1e293b;
-border-radius:10px;
-overflow:hidden;
-margin-top:15px;
-}
-
-.progress-fill{
-height:100%;
-background:linear-gradient(90deg,#22c55e,#06b6d4);
-}
-
-.ai-box{
-margin-top:25px;
-padding:20px;
-background:rgba(0,0,0,0.25);
-border-radius:12px;
-text-align:left;
-line-height:1.6;
-}
-
-.badge{
-display:inline-block;
-padding:6px 14px;
-border-radius:20px;
-margin-top:10px;
-font-size:14px;
-}
-
-.good{ background:#22c55e; }
-.mid{ background:#facc15; color:black; }
-.low{ background:#ef4444; }
-
-</style>
-
 </head>
 
 <body class="home-body">
 
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right"><a href="/home" style="font-size:13px;color:var(--text-muted);">← Back</a></div>
+</nav>
+
 <div class="career-container">
 
-<h2>Placement Readiness Analyzer</h2>
+    <div class="page-header">
+        <h2>Placement Readiness Analyzer</h2>
+        <p>Fill in your profile to get a readiness score and AI-powered feedback.</p>
+    </div>
 
-<form method="POST">
+    <div class="form-card">
+    <form method="POST" id="placementForm">
 
-<div class="section-title">Core Skills</div>
+        <div class="section-title">Core CS Subjects</div>
+        <div class="skill-grid">
+            <label class="skill-item"><input type="checkbox" name="core_skills" value="OOPS"> OOP Concepts</label>
+            <label class="skill-item"><input type="checkbox" name="core_skills" value="DBMS"> DBMS</label>
+            <label class="skill-item"><input type="checkbox" name="core_skills" value="OS"> Operating Systems</label>
+            <label class="skill-item"><input type="checkbox" name="core_skills" value="CN"> Computer Networks</label>
+        </div>
 
-<div class="skill-grid">
+        <div class="section-title">DSA Concepts</div>
+        <div class="skill-grid">
+            <label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Arrays"> Arrays</label>
+            <label class="skill-item"><input type="checkbox" name="dsa_concepts" value="LinkedList"> Linked List</label>
+            <label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Stack"> Stack & Queue</label>
+            <label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Trees"> Trees</label>
+            <label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Graphs"> Graphs</label>
+            <label class="skill-item"><input type="checkbox" name="dsa_concepts" value="DP"> Dynamic Programming</label>
+        </div>
 
-<label class="skill-item"><input type="checkbox" name="core_skills" value="OOPS"> OOPS</label>
-<label class="skill-item"><input type="checkbox" name="core_skills" value="DBMS"> DBMS</label>
-<label class="skill-item"><input type="checkbox" name="core_skills" value="OS"> Operating Systems</label>
-<label class="skill-item"><input type="checkbox" name="core_skills" value="CN"> Computer Networks</label>
+        <div class="section-title">Preferred Programming Language</div>
+        <input type="text" name="language" placeholder="e.g. Python, Java, C++, JavaScript" required>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">Projects</div>
+                <select name="projects">
+                    <option value="no">No projects yet</option>
+                    <option value="yes">Yes, I have projects</option>
+                </select>
+            </div>
+            <div>
+                <div class="section-title">Internship</div>
+                <select name="internship">
+                    <option value="no">No internship</option>
+                    <option value="yes">Have internship</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">DSA Practice Consistency</div>
+                <select name="consistency">
+                    <option value="low">Low (rarely)</option>
+                    <option value="medium">Medium (weekly)</option>
+                    <option value="high">High (daily)</option>
+                </select>
+            </div>
+            <div>
+                <div class="section-title">Resume Quality</div>
+                <select name="resume">
+                    <option value="average">Average</option>
+                    <option value="good">Well-crafted</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">Communication Skills</div>
+                <select name="communication">
+                    <option value="average">Average</option>
+                    <option value="good">Good / Confident</option>
+                </select>
+            </div>
+            <div>
+                <div class="section-title">Mock Interviews Done?</div>
+                <select name="mock">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ── NEW EXTENDED FIELDS ────────────────────────────── -->
+        <div style="margin:20px 0 10px;padding-top:20px;border-top:1px solid var(--border);
+                    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+                    color:#818cf8;text-transform:uppercase;letter-spacing:.07em;">
+            Additional Profile Details
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">Hackathons Participated?</div>
+                <select name="hackathons">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+            <div>
+                <div class="section-title">Open Source Contributions?</div>
+                <select name="open_source">
+                    <option value="no">No</option>
+                    <option value="yes">Yes (GitHub PRs)</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">Any Certifications?</div>
+                <select name="certifications">
+                    <option value="no">No</option>
+                    <option value="yes">Yes (AWS, Google, etc.)</option>
+                </select>
+            </div>
+            <div>
+                <div class="section-title">Active LinkedIn Profile?</div>
+                <select name="linkedin">
+                    <option value="no">No / Inactive</option>
+                    <option value="yes">Yes, actively updated</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">Aptitude / Quantitative Skills</div>
+                <select name="aptitude">
+                    <option value="average">Average</option>
+                    <option value="strong">Strong</option>
+                    <option value="weak">Needs Work</option>
+                </select>
+            </div>
+            <div>
+                <div class="section-title">Coding Platform Activity</div>
+                <select name="coding_platform">
+                    <option value="none">None</option>
+                    <option value="leetcode">LeetCode</option>
+                    <option value="codeforces">Codeforces / CodeChef</option>
+                    <option value="both">Both</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+                <div class="section-title">Current / Last CGPA</div>
+                <input type="text" name="cgpa" placeholder="e.g. 8.2" style="margin-bottom:0;">
+            </div>
+            <div>
+                <div class="section-title">Active Backlogs?</div>
+                <select name="backlogs" style="border-color:rgba(248,113,113,.3);">
+                    <option value="no">No backlogs</option>
+                    <option value="yes">Yes, have backlogs</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+        <button type="submit" id="submitBtn">Analyze My Readiness</button>
+
+    </form>
+    </div>
+
+    {% if score is not none %}
+
+    <div class="result-box" id="resultSection">
+
+        <div style="margin-bottom:20px;">
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;
+                        font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.07em;">
+                Placement Readiness Score
+            </div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:64px;font-weight:700;line-height:1;
+                        color:{% if score >= 75 %}#34d399{% elif score >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                {{ score }}<span style="font-size:28px;opacity:.6;">%</span>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" style="width:{{ score }}%;
+                {% if score >= 75 %}background:linear-gradient(90deg,#34d399,#22d3ee);
+                {% elif score >= 50 %}background:linear-gradient(90deg,#fbbf24,#f97316);
+                {% else %}background:linear-gradient(90deg,#f87171,#ec4899);{% endif %}">
+            </div>
+        </div>
+
+        {% if score >= 75 %}
+            <div class="badge badge-good">🚀 Excellent — Placement Ready</div>
+            <p class="status-good" style="font-size:14px;margin-top:8px;">You're highly placement ready. Keep pushing and applying!</p>
+        {% elif score >= 50 %}
+            <div class="badge badge-mid">⚡ Moderate — Almost There</div>
+            <p class="status-mid" style="font-size:14px;margin-top:8px;">You're close — improve a few key areas to stand out.</p>
+        {% else %}
+            <div class="badge badge-low">⚠️ Needs Improvement</div>
+            <p class="status-low" style="font-size:14px;margin-top:8px;">Focus on fundamentals, consistency, and building projects.</p>
+        {% endif %}
+
+        {% if probability %}
+        <div style="margin-top:12px;font-size:13px;color:var(--text-muted);">
+            Placement probability: <strong style="color:#a5b4fc;">{{ probability }}</strong>
+        </div>
+        {% endif %}
+
+        {% if ai_feedback %}
+        <div class="ai-box">
+            <h3>✦ AI Career Insights</h3>
+            <pre style="white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:14px;
+                        line-height:1.7;color:var(--text-muted);">{{ ai_feedback }}</pre>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        document.getElementById('resultSection').scrollIntoView({ behavior:'smooth', block:'start' });
+    </script>
+    {% endif %}
 
 </div>
 
-
-<div class="section-title">DSA Concepts</div>
-
-<div class="skill-grid">
-
-<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Arrays"> Arrays</label>
-<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="LinkedList"> Linked List</label>
-<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Stack"> Stack</label>
-<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Queue"> Queue</label>
-<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Trees"> Trees</label>
-<label class="skill-item"><input type="checkbox" name="dsa_concepts" value="Graphs"> Graphs</label>
-
-</div>
-
-
-<div class="section-title">Preferred Language</div>
-
-<input type="text"
-name="language"
-placeholder="Python / Java / C++"
-required>
-
-
-<div class="section-title">Projects</div>
-
-<select name="projects">
-<option value="no">No</option>
-<option value="yes">Yes</option>
-</select>
-
-
-<div class="section-title">Internship</div>
-
-<select name="internship">
-<option value="no">No</option>
-<option value="yes">Yes</option>
-</select>
-
-
-<!-- 🔥 NEW REALISTIC FIELDS -->
-
-<div class="section-title">Problem Solving Consistency</div>
-
-<select name="consistency">
-<option value="low">Low</option>
-<option value="medium">Medium</option>
-<option value="high">High</option>
-</select>
-
-
-<div class="section-title">Resume Quality</div>
-
-<select name="resume">
-<option value="average">Average</option>
-<option value="good">Good</option>
-</select>
-
-
-<div class="section-title">Communication Skills</div>
-
-<select name="communication">
-<option value="average">Average</option>
-<option value="good">Good</option>
-</select>
-
-
-<div class="section-title">Mock Interviews</div>
-
-<select name="mock">
-<option value="no">No</option>
-<option value="yes">Yes</option>
-</select>
-
-
-<br>
-
-<button type="submit"
-onclick="this.innerText='Analyzing...';">
-
-Analyze Readiness
-
-</button>
-
-</form>
-
-
-{% if score is not none %}
-
-<div class="result-box">
-
-<h3>Your Placement Readiness</h3>
-
-<h1 style="font-size:52px;color:#22c55e;">
-{{ score }}%
-</h1>
-
-<div class="progress-bar">
-<div class="progress-fill" style="width:{{ score }}%"></div>
-</div>
-
-
-<!-- STATUS BADGE -->
-
-{% if score >= 75 %}
-<div class="badge good">Excellent 🚀</div>
-
-{% elif score >= 50 %}
-<div class="badge mid">Moderate ⚡</div>
-
-{% else %}
-<div class="badge low">Needs Improvement ⚠️</div>
-{% endif %}
-
-
-<br><br>
-
-{% if score >= 75 %}
-<p style="color:#22c55e;">
-You're highly placement ready. Keep pushing 🚀
-</p>
-
-{% elif score >= 50 %}
-<p style="color:#facc15;">
-You're close — improve a few key areas ⚡
-</p>
-
-{% else %}
-<p style="color:#ef4444;">
-Focus on fundamentals and consistency ⚠️
-</p>
-{% endif %}
-
-
-<div class="ai-box">
-
-<h3>AI Career Insights</h3>
-
-<pre style="white-space:pre-wrap;">{{ ai_feedback }}</pre>
-
-</div>
-
-</div>
-
-{% endif %}
-
-</div>
+<script>
+document.getElementById('placementForm').addEventListener('submit', function() {
+    document.getElementById('submitBtn').textContent = 'Analyzing...';
+    document.getElementById('submitBtn').disabled = true;
+});
+</script>
 
 </body>
 </html>

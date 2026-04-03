@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right">
+        <a href="/assessment" style="font-size:13px;color:var(--text-muted);">← Assessments</a>
+    </div>
+</nav>
+
+<div class="career-container" style="max-width:720px;">
+
+    <!-- Score summary -->
+    <div class="result-box" style="margin-bottom:28px;">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;
+                    font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.07em;">
+            {{ topic }} — MCQ Result
+        </div>
+
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:64px;font-weight:700;line-height:1;
+                    color:{% if score_pct >= 70 %}#34d399{% elif score_pct >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+            {{ score_pct }}<span style="font-size:28px;opacity:.6;">%</span>
+        </div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:8px;">
+            {{ correct }} correct out of {{ total }} MCQ questions
+        </div>
+
+        <div class="progress-bar" style="margin:16px 0;">
+            <div class="progress-fill" style="width:{{ score_pct }}%;
+                {% if score_pct >= 70 %}background:linear-gradient(90deg,#34d399,#22d3ee);
+                {% elif score_pct >= 50 %}background:linear-gradient(90deg,#fbbf24,#f97316);
+                {% else %}background:linear-gradient(90deg,#f87171,#ec4899);{% endif %}">
+            </div>
+        </div>
+
+        {% if score_pct >= 70 %}
+            <div class="badge badge-good">🎉 Mastered — {{ topic }}</div>
+            <p style="font-size:14px;color:#34d399;margin-top:8px;">Great job! This topic is marked as mastered.</p>
+        {% elif score_pct >= 50 %}
+            <div class="badge badge-mid">📚 Keep Practising</div>
+            <p style="font-size:14px;color:#fbbf24;margin-top:8px;">Score ≥70% to mark this topic as mastered.</p>
+        {% else %}
+            <div class="badge badge-low">⚠️ Needs More Work</div>
+            <p style="font-size:14px;color:#f87171;margin-top:8px;">Review the explanations below and retry.</p>
+        {% endif %}
+
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+            <form method="POST" action="/assessment/start" style="display:inline;">
+                <input type="hidden" name="topic" value="{{ topic }}">
+                <button type="submit" style="width:auto;padding:12px 22px;font-size:13px;">Retry Topic</button>
+            </form>
+            <a href="/assessment" class="secondary-btn" style="padding:12px 22px;font-size:13px;">Choose New Topic</a>
+            <a href="/leaderboard" class="secondary-btn" style="padding:12px 22px;font-size:13px;">🏆 Leaderboard</a>
+        </div>
+    </div>
+
+    <!-- Per-question breakdown -->
+    <div class="section-title" style="margin-bottom:12px;">Question Breakdown</div>
+
+    {% for r in results %}
+    {% if r.type == 'code' %}
+    <!-- Code question review -->
+    <div style="background:var(--bg-card);border:1px solid rgba(34,211,238,.25);
+                border-radius:var(--radius);padding:22px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <span style="font-size:11px;background:rgba(34,211,238,.1);color:#22d3ee;
+                         border:1px solid rgba(34,211,238,.25);border-radius:4px;
+                         padding:3px 10px;font-family:'Space Grotesk',sans-serif;font-weight:600;">
+                CODE QUESTION
+            </span>
+            <span style="font-size:11px;color:var(--text-dim);">Self-assessed</span>
+        </div>
+        <p style="font-size:14px;color:var(--text-main);line-height:1.5;margin-bottom:12px;">
+            {{ r.question }}
+        </p>
+        {% if r.your_answer %}
+        <div style="background:rgba(10,14,30,.6);border:1px solid var(--border);border-radius:8px;
+                    padding:12px;margin-bottom:10px;font-size:13px;color:var(--text-muted);font-family:monospace;line-height:1.6;">
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;">Your answer:</div>
+            {{ r.your_answer }}
+        </div>
+        {% endif %}
+        <div style="background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.2);
+                    border-radius:8px;padding:12px;font-size:13px;color:var(--text-muted);line-height:1.5;">
+            <div style="font-size:11px;color:#22d3ee;margin-bottom:6px;">Model answer / expected approach:</div>
+            {{ r.correct_answer }}
+        </div>
+        {% if r.explanation %}
+        <div style="margin-top:10px;padding:10px 14px;background:rgba(10,14,30,.6);
+                    border-left:2px solid #818cf8;border-radius:0 6px 6px 0;
+                    color:var(--text-muted);line-height:1.5;font-size:13px;">
+            {{ r.explanation }}
+        </div>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <!-- MCQ review -->
+    <div style="background:var(--bg-card);border:1px solid
+                {% if r.is_correct %}rgba(52,211,153,.3){% else %}rgba(248,113,113,.3){% endif %};
+                border-radius:var(--radius);padding:22px;margin-bottom:14px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;
+                        background:{% if r.is_correct %}rgba(52,211,153,.2){% else %}rgba(248,113,113,.2){% endif %};
+                        display:flex;align-items:center;justify-content:center;font-size:14px;">
+                {% if r.is_correct %}✓{% else %}✗{% endif %}
+            </div>
+            <div style="flex:1;">
+                <p style="font-size:14px;color:var(--text-main);line-height:1.5;margin-bottom:12px;">
+                    {{ r.question }}
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;">
+                    <div>
+                        <span style="color:var(--text-muted);">Your answer: </span>
+                        <span style="color:{% if r.is_correct %}#34d399{% else %}#f87171{% endif %};font-weight:500;">
+                            {{ r.your_answer or '(no answer)' }}
+                        </span>
+                    </div>
+                    {% if not r.is_correct %}
+                    <div>
+                        <span style="color:var(--text-muted);">Correct answer: </span>
+                        <span style="color:#34d399;font-weight:500;">{{ r.correct_answer }}</span>
+                    </div>
+                    {% endif %}
+                    {% if r.explanation %}
+                    <div style="margin-top:8px;padding:10px 14px;background:rgba(10,14,30,.6);
+                                border-left:2px solid #818cf8;border-radius:0 6px 6px 0;
+                                color:var(--text-muted);line-height:1.5;">
+                        {{ r.explanation }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+</div>
+</body>
+</html>

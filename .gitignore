@@ -1,0 +1,29 @@
+# Environment & secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Flask
+instance/
+.webassets-cache
+
+# Uploads (resume files)
+uploads/
+static/uploads/
+
+# PyCharm IDE files
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db

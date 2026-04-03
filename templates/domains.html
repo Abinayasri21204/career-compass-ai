@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Domains — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/home" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right"><a href="/home" style="font-size:13px;color:var(--text-muted);">← Back</a></div>
+</nav>
+
+<div class="career-container">
+
+    <div class="page-header">
+        <h2>My Domains</h2>
+        <p>Switch between fields like switching languages in Duolingo. Each domain keeps its own assessment history and progress.</p>
+    </div>
+
+    <!-- Current domains -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:36px;">
+        {% for d in user_domains %}
+        <div style="background:var(--bg-card);border:1px solid {% if d.id == active_id %}rgba(99,102,241,.5){% else %}var(--border){% endif %};
+                    border-radius:var(--radius);padding:22px;position:relative;
+                    {% if d.id == active_id %}box-shadow:0 0 20px rgba(99,102,241,.15);{% endif %}">
+
+            {% if d.is_primary %}
+            <span style="position:absolute;top:14px;right:14px;font-size:11px;font-family:'Space Grotesk',sans-serif;
+                         font-weight:600;background:rgba(99,102,241,.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,.3);border-radius:100px;padding:3px 10px;">
+                PRIMARY
+            </span>
+            {% endif %}
+
+            {% if d.id == active_id %}
+            <span style="position:absolute;top:{% if d.is_primary %}38px{% else %}14px{% endif %};right:14px;
+                         font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:600;
+                         background:rgba(52,211,153,.15);color:#34d399;
+                         border:1px solid rgba(52,211,153,.3);border-radius:100px;padding:3px 10px;">
+                ACTIVE
+            </span>
+            {% endif %}
+
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+                        color:var(--text-main);margin-bottom:16px;padding-right:70px;">
+                {{ d.domain_name }}
+            </div>
+
+            {% if d.id != active_id %}
+            <a href="/domains/switch/{{ d.id }}"
+               style="font-size:13px;color:#818cf8;border:1px solid var(--border);
+                      border-radius:6px;padding:7px 14px;display:inline-block;transition:all .2s;">
+                Switch to this →
+            </a>
+            {% else %}
+            <span style="font-size:13px;color:var(--text-dim);">Currently active</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Add domain -->
+    <div class="form-card">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+                    color:var(--text-main);margin-bottom:16px;">Add a new domain</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+            Add a secondary domain to track progress in another field — your data won't mix.
+        </p>
+        <form method="POST" action="/domains/add" style="display:flex;gap:12px;">
+            <select name="domain" style="flex:1;margin-bottom:0;">
+                <option value="" disabled selected>Choose a domain to add</option>
+                {% for d in available %}
+                    {% if d not in user_domains|map(attribute='domain_name')|list %}
+                    <option>{{ d }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <button type="submit" style="width:auto;padding:13px 24px;white-space:nowrap;">Add Domain</button>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

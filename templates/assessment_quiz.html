@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: {{ topic }} — Career Compass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-body">
+
+<nav class="navbar">
+    <div class="logo"><a href="/assessment" style="background:linear-gradient(135deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">◈ Career Compass</a></div>
+    <div class="nav-right">
+        <a href="/assessment" style="font-size:13px;color:var(--text-muted);">← Back to Topics</a>
+    </div>
+</nav>
+
+<div class="career-container" style="max-width:720px;">
+
+    <div class="page-header">
+        <h2>{{ topic }}</h2>
+        <p>{{ questions|length }} questions · {{ domain }} · Answer all MCQs before submitting</p>
+    </div>
+
+    {% if not questions %}
+    <div class="form-card" style="text-align:center;">
+        <p style="color:var(--text-muted);">AI couldn't generate questions right now. Please try again.</p>
+        <a href="/assessment" class="primary-btn" style="display:inline-block;margin-top:16px;">← Try Again</a>
+    </div>
+    {% else %}
+
+    <form method="POST" action="/assessment/submit" id="quizForm">
+        <input type="hidden" name="topic" value="{{ topic }}">
+        <input type="hidden" name="num_questions" value="{{ questions|length }}">
+        <input type="hidden" name="correct_answers" id="correctAnswers">
+        <input type="hidden" name="questions_data" id="questionsData">
+
+        {% set mcq_count = namespace(n=0) %}
+        {% set code_count = namespace(n=0) %}
+
+        {% for q in questions %}
+
+        {% if q.get('type','mcq') == 'code' %}
+        <!-- ── CODE QUESTION ──────────────────────────────── -->
+        <div class="form-card" style="margin-bottom:16px;border-color:rgba(34,211,238,.25);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <span style="font-size:11px;background:rgba(34,211,238,.1);color:#22d3ee;
+                             border:1px solid rgba(34,211,238,.25);border-radius:4px;
+                             padding:3px 10px;font-family:'Space Grotesk',sans-serif;font-weight:600;">
+                    CODE {{ loop.index }}
+                </span>
+                <span style="font-size:11px;color:var(--text-dim);">Write your answer below</span>
+            </div>
+            <p style="font-size:15px;color:var(--text-main);margin-bottom:18px;line-height:1.5;">
+                {{ q.q }}
+            </p>
+            <textarea name="q_{{ loop.index0 }}"
+                      placeholder="Write your code or explain your approach here..."
+                      style="width:100%;min-height:120px;padding:14px;background:#0a0e1e;
+                             border:1px solid rgba(34,211,238,.25);border-radius:8px;
+                             color:#e2e8f0;font-family:'DM Sans',sans-serif;font-size:13px;
+                             line-height:1.6;resize:vertical;margin-bottom:0;">
+            </textarea>
+            <p style="font-size:11px;color:var(--text-dim);margin-top:6px;">
+                💡 Code questions are not auto-graded — review the model answer after submission.
+            </p>
+        </div>
+        {% set code_count.n = code_count.n + 1 %}
+
+        {% else %}
+        <!-- ── MCQ ──────────────────────────────────────────── -->
+        <div class="form-card" style="margin-bottom:16px;" data-mcq="{{ loop.index0 }}">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#818cf8;
+                        font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.07em;">
+                Question {{ loop.index }}
+            </div>
+            <p style="font-size:15px;color:var(--text-main);margin-bottom:18px;line-height:1.5;">
+                {{ q.q }}
+            </p>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                {% for opt in q.options %}
+                <label style="display:flex;align-items:center;gap:12px;
+                              background:rgba(10,14,30,.7);border:1px solid var(--border);
+                              border-radius:8px;padding:12px 16px;cursor:pointer;
+                              font-size:14px;color:var(--text-muted);transition:all .2s;"
+                       class="opt-label">
+                    <input type="radio" name="q_{{ loop.index0 }}" value="{{ opt }}"
+                           style="width:auto;margin:0;accent-color:#6366f1;"
+                           onchange="this.closest('div').querySelectorAll('.opt-label').forEach(l=>{
+                               l.style.background='rgba(10,14,30,.7)';
+                               l.style.borderColor='var(--border)';
+                               l.style.color='var(--text-muted)';
+                           });
+                           this.closest('.opt-label').style.background='rgba(99,102,241,.12)';
+                           this.closest('.opt-label').style.borderColor='rgba(99,102,241,.45)';
+                           this.closest('.opt-label').style.color='#a5b4fc';
+                           updateProgress();">
+                    {{ opt }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% set mcq_count.n = mcq_count.n + 1 %}
+        {% endif %}
+
+        {% endfor %}
+
+        <!-- Progress indicator (MCQs only) -->
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+                    padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;">
+            <div style="flex:1;">
+                <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">MCQs answered</div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+            </div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#818cf8;" id="progressText">
+                0 / {{ mcq_count.n }}
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Quiz</button>
+    </form>
+
+    <script>
+        const qdata  = {{ questions | tojson }};
+        const mcqTotal = qdata.filter(q => (q.type || 'mcq') === 'mcq').length;
+
+        document.getElementById('questionsData').value  = JSON.stringify(qdata);
+        document.getElementById('correctAnswers').value = JSON.stringify(qdata.map(q => q.answer || ''));
+
+        function updateProgress() {
+            let answered = 0;
+            qdata.forEach((q, i) => {
+                if ((q.type || 'mcq') === 'mcq') {
+                    if (document.querySelector(`input[name="q_${i}"]:checked`)) answered++;
+                }
+            });
+            const pct = mcqTotal ? (answered / mcqTotal * 100) : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressText').textContent = answered + ' / ' + mcqTotal;
+        }
+
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', updateProgress));
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            // Only enforce MCQs
+            let missing = false;
+            qdata.forEach((q, i) => {
+                if ((q.type || 'mcq') === 'mcq' && !document.querySelector(`input[name="q_${i}"]:checked`)) {
+                    missing = true;
+                }
+            });
+            if (missing) {
+                e.preventDefault();
+                alert('Please answer all multiple-choice questions before submitting.');
+                return;
+            }
+            document.getElementById('submitBtn').textContent = 'Submitting...';
+            document.getElementById('submitBtn').disabled = true;
+        });
+    </script>
+    {% endif %}
+
+</div>
+</body>
+</html>
